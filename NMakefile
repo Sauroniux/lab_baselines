@@ -1,0 +1,19 @@
+# MPLAB IDE generated this makefile for use with Microsoft `nmake'.
+# Project: lab.mcp
+# Date: Thu Nov 03 14:02:14 2022
+
+AS = MPASMWIN.exe
+CC = 
+LD = mplink.exe
+AR = mplib.exe
+RM = del
+
+"lab.cof" : "lab5.o"
+	$(CC) /p16F84A "lab5.o" /u_DEBUG /z__MPLAB_BUILD=1 /z__MPLAB_DEBUG=1 /o"lab.cof" /M"lab.map" /W
+
+"lab5.o" : "lab5.asm" "..\..\..\..\Program Files (x86)\Microchip\MPASM Suite\p16F84a.inc"
+	$(AS) /q /p16F84A "lab5.asm" /l"lab5.lst" /e"lab5.err" /o"lab5.o" /d__DEBUG=1
+
+"clean" : 
+	$(CC) "lab5.o" "lab5.err" "lab5.lst" "lab.cof" "lab.hex"
+
