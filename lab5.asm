@@ -4,7 +4,7 @@
 ; Kvarcinio rezonatoriaus daznis 4 MHz
 ;********************************************************
 
-#define PUNKTAS 23
+#define PUNKTAS 12
 
 #define PUNKTAS_15 PUNKTAS == 15
 #define PUNKTAS_18 PUNKTAS == 18
