@@ -1,4 +1,4 @@
-MPASM  5.51                          LAB8.ASM   11-24-2022  15:10:04         PAGE  1
+MPASM  5.51                          LAB8.ASM   11-24-2022  15:26:07         PAGE  1
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
@@ -28,118 +28,172 @@ LOC  OBJECT CODE     LINE SOURCE TEXT
                       00013                                                 ;konfiguracija MV
                       00014 ;******************************************************
                       00015 
-                      00016 ;**********************Kintamasis ***********************
-  0000000C            00017 Kint1 EQU 0Ch ;registra 0Ch pavadinti Kint1
-                      00018 ;********************************************************
-                      00019 
-                      00020                 ORG 0x000               ;nurodomas pradinis programos adresas 
-                      00021 
-0000   0185           00022                 clrf PORTA              ;išvalyti PORTA registra
-0001   0186           00023                 clrf PORTB              ;išvalyti PORTB registra
-                      00024 
-0002   1683           00025                 bsf STATUS, 5   ;pereiti i 1 banka
-                      00026 
-0003   3000           00027                 movlw b'00000000' ;irašyti i W registra
-                      00028                                                 ;dvejetaini skaiciu,
-                      00029                                                 ;pateikta tarp kabuciu
-Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-0004   0086           00030                 movwf TRISB     ;perkelti W registro turini i
-                      00031                                                 ;TRISB registra (nustatyti B
-                      00032                                                 ;prievado išvadus
-                      00033                                                 ;duomenims išvesti)
-0005   3000           00034                 movlw b'00000'  ;irašyti i W registra
-                      00035                                                 ;dvejetaini skaiciu,
-                      00036                                                 ;pateikta tarp kabuciu
-Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-0006   0085           00037                 movwf TRISA     ;perkelti W registro turini
-                      00038                                                 ;i TRISA registra
-                      00039                                                 ;(nustatyti prievado
-                      00040                                                 ;išvadus duomenims išvesti)
-0007   3007           00041                 movlw b'00000111' ;irašyti i W registra dvejetaini
-                      00042                                                 ;skaiciu, pateikta tarp kabuciu
-MPASM  5.51                          LAB8.ASM   11-24-2022  15:10:04         PAGE  2
+                      00016 ;**********************Kintamieji ***********************
+  0000000C            00017 Wreg EQU 0Ch ; ;registra 0Ch pavadinti Wreg
+  0000000D            00018 Stat EQU 0Dh ;registra 0Dh pavadinti Stat
+  0000000E            00019 Kint1 EQU 0Eh ;registra 0Eh pavadinti Kint1
+  0000000F            00020 Kint2 EQU 0Fh ;registra 0Fh pavadinti Kint2
+  00000010            00021 Kint3 EQU 10h ;registra 10h pavadinti Kint3
+                      00022 ;********************************************************
+                      00023 
+                      00024                 ORG 0x000               ;nurodomas pradinis programos adresas 
+                      00025 
+0000   2???           00026                 goto Pagrindineprogr
+                      00027 ;********** *Pertraukties programa laikui skaiciuoti*********
+                      00028 
+                      00029                 ORG 0x004               ;pertraukties programos
+                      00030                                                 ;pradinis adresas
+0004   008C           00031                 movwf Wreg              ;išsaugoti W registro turini
+0005   0803           00032                 movf STATUS,0   ;perkelti STATUS registro turini i W
+0006   008D           00033                 movwf Stat              ;išsaugoti STATUS
+                      00034                                                 ;registro turini
+0007   110B           00035                 bcf INTCON,2    ;išvalyti (ikelti „0“ i) pertraukties
+                      00036                                                 ;požymio bito T0IF skilti
+0008   0B8E           00037                 decfsz Kint1,1  ;atimti vieneta iš kintamojo Kint1 ir,
+                      00038                                                 ;kai jis bus lygus nuliui,
+                      00039                                                 ;peršokti komanda goto Ten
+0009   2???           00040                 goto Ten                ;pereiti i programos eilute,
+                      00041                                                 ;pažymeta žyme Ten
+000A   3002           00042                 movlw d'2'      ;irašyti i W registra dešimtaini
+                      00043                                                 ;skaiciu, pateikta tarp kabuciu
+000B   008E           00044                 movwf Kint1     ;perkelti W registro turini
+MPASM  5.51                          LAB8.ASM   11-24-2022  15:26:07         PAGE  2
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
+                      00045                                                 ;i Kint1 registra
+000C   0386           00046                 decf PORTB,1    ;padidinti PORTB registro
+                      00047                                                 ;turini vienetu
+000D                  00048 Ten
+000D   300C           00049                 movlw d'12'     ;irašyti i W registra dešimtaini
+                      00050                                                 ;skaiciu, pateikta tarp kabuciu
+000E   0081           00051                 movwf TMR0              ;perkelti W registro turini
+                      00052                                                 ;i TMR0 registra
+000F   080D           00053                 movf Stat,0     ;perkelti Stat registro
+                      00054                                                 ;turini i W registra
+0010   0083           00055                 movwf STATUS    ;perkelti W registro turini
+                      00056                                                 ;i STATUS (atkurti
+                      00057                                                 ;STATUS registro turini)
+0011   080C           00058                 movf Wreg,0     ;atkurti W registro turini
+0012   0009           00059                 retfie                  ;grižti i pagrindine programa
+                      00060 ;*******************************************************
+0013                  00061 Pagrindineprogr
+                      00062 
+0013   0185           00063                 clrf PORTA              ;išvalyti PORTA registra
+0014   0186           00064                 clrf PORTB              ;išvalyti PORTB registra
+                      00065                 
+0015   30FF           00066                 movlw b'11111111'
+0016   0086           00067                 movwf PORTB 
+                      00068 
+0017   1683           00069                 bsf STATUS, 5   ;pereiti i 1 banka
+                      00070 
+0018   3000           00071                 movlw b'00000000' ;irašyti i W registra
+                      00072                                                 ;dvejetaini skaiciu,
+                      00073                                                 ;pateikta tarp kabuciu
 Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
-0008   0081           00043                 movwf OPTION_REG ;perkelti W registro turini i
-                      00044                                                 ;OPTION_REG registra
-0009   1283           00045                 bcf STATUS, 5   ;pereiti i 0 banka
-                      00046 
-000A   3010           00047                 movlw d'16'     ;irašyti i W registra
-                      00048                                                 ;dešimtaini skaiciu,
-                      00049                                                 ;pateikta tarp kabuciu
-000B   008C           00050                 movwf Kint1     ;perkelti W registro turini
-                      00051                                                 ;i Kint1 registra
-000C                  00052 Start1 
-000C   300B           00053                 movlw d'11'     ;irašyti i W registra
-                      00054                                                 ;dešimtaini skaiciu,
-                      00055                                                 ;pateikta tarp kabuciu
-000D   0081           00056                 movwf TMR0              ;perkelti W registro turini
-                      00057                                                 ;i TMRO registra
-                      00058                 
-000E   0000           00059                 nop
-000F   0000           00060                 nop
-0010   0000           00061                 nop
-0011   0000           00062                 nop
-0012   0000           00063                 nop
-0013   0000           00064                 nop
-0014   0000           00065                 nop
-0015   0000           00066                 nop
-0016   0000           00067                 nop
-0017   0000           00068                 nop
-                      00069                 
-0018                  00070 Start2
-0018   1D0B           00071                 btfss INTCON,2  ;patikrinti INTCON
-                      00072                                                 ;registro 2 skilti,
-                      00073                                                 ;jei joje yra „1“, peršokti
-                      00074                                                 ;komanda goto Start2
-0019   2???           00075                 goto Start2     ;pereiti i programos eilute, 
-                      00076                                                 ;pažymeta žyme Start2
-001A   110B           00077                 bcf INTCON,2    ;ikelti „0“ i INTCON
-                      00078                                                 ;registro 2 skilti (išvalyti
-                      00079                                                 ;T0IF bita kitam ciklui)
-001B   0B8C           00080                 decfsz Kint1,1  ;atimti vieneta iš
-                      00081                                                 ;kintamojo Kint1 ir,
-                      00082                                                 ;kai jis bus lygus nuliui,
-                      00083                                                 ;peršokti komanda
-                      00084                                                 ;goto Start1
-001C   2???           00085                 goto Start1     ;pereiti i programos eilute,
-                      00086                                                 ;pažymeta žyme Start1
-                      00087                         
-001D   3001           00088                 movlw d'1'
-001E   0786           00089                 addwf PORTB,1
-                      00090                 
-001F   1803           00091                 btfsc STATUS,0
-Message[305]: Using default destination of 1 (file).
-0020   0A85           00092                 incf PORTA
-                      00093                         
-MPASM  5.51                          LAB8.ASM   11-24-2022  15:10:04         PAGE  3
+0019   0086           00074                 movwf TRISB     ;perkelti W registro turini i
+                      00075                                                 ;TRISB registra (nustatyti B
+                      00076                                                 ;prievado išvadus
+                      00077                                                 ;duomenims išvesti)
+001A   3000           00078                 movlw b'00000'  ;irašyti i W registra
+                      00079                                                 ;dvejetaini skaiciu,
+                      00080                                                 ;pateikta tarp kabuciu
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+001B   0085           00081                 movwf TRISA     ;perkelti W registro turini
+                      00082                                                 ;i TRISA registra
+                      00083                                                 ;(nustatyti prievado
+                      00084                                                 ;išvadus duomenims išvesti)
+                      00085                                                 
+                      00086 ; 20
+001C   1283           00087                 bcf STATUS,5    ;pereiti i 0 banka
+001D   300C           00088                 movlw d'12'     ;irašyti i W registra
+                      00089                                                 ;dešimtaini skaiciu,
+                      00090                                                 ;pateikta tarp kabuciu
+                      00091                                                 ;(TMRO pradine verte)
+001E   0081           00092                 movwf TMR0              ;perkelti W registro turini 
+                      00093                                                 ;i TMR0 registra
+001F   3010           00094                 movlw d'16'     ;irašyti i W registra
+                      00095                                                 ;dešimtaini skaiciu,
+MPASM  5.51                          LAB8.ASM   11-24-2022  15:26:07         PAGE  3
 
 
 LOC  OBJECT CODE     LINE SOURCE TEXT
   VALUE
 
-                      00094                 ;incf PORTB             ;padidinti PORTB registro
-                      00095                                                 ;turini vienetu
-0021   3010           00096                 movlw d'16'     ;irašyti i W registra
-                      00097                                                 ;dešimtaini skaiciu,
-                      00098                                                 ;pateikta tarp kabuciu
-0022   008C           00099                 movwf Kint1     ;perkelti W registro
-                      00100                                                 ;turini i Kint1 registra
-0023   2???           00101                 goto Start1     ;pereiti i programos
-                      00102                                                 ;eilute, pažymeta
-                      00103                                                 ;žyme Start1
-3FF1                  00104                 END ;programos pabaiga
-MPASM  5.51                          LAB8.ASM   11-24-2022  15:10:04         PAGE  4
+                      00096                                                 ;pateikta tarp kabuciu
+0020   008E           00097                 movwf Kint1     ;perkelti W registro turini
+                      00098                                                 ;i Kint1 registra
+0021   018B           00099                 clrf INTCON     ;išvalyti INTCON registra
+0022   1683           00100                 bsf STATUS, 5   ;pereiti i 1 banka
+0023   30C7           00101                 movlw b'11000111' ;irašyti i W registra
+                      00102                                                 ;dvejetaini skaiciu,
+                      00103                                                 ;pateikta tarp kabuciu
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0024   0081           00104                 movwf OPTION_REG ;perkelti W registro turini i
+                      00105                                                 ;OPTION_REG registra
+                      00106                                                 ;(suteikti konfiguracija
+                      00107                                                 ;OPTION_REG registrui)
+0025   1283           00108                 bcf STATUS, 5   ;pereiti i 0 banka
+0026   168B           00109                 bsf INTCON, T0IE ;ikelti „1“ i INTCON registro T0IE bito
+                      00110                                                 ;skilti (leisti pertraukti,
+                      00111                                                 ;persipildžius TMR0 registrui)
+0027   178B           00112                 bsf INTCON, GIE ;leisti visas pertrauktis
+                      00113                 
+                      00114 ;21
+                      00115 ;**************Žemo dažnio impulsu generatorius***********
+0028                  00116 Start
+0028   300E           00117                 movlw b'01110'  ;irašyti i W registra dvejetaini
+                      00118                                                 ;skaiciu, pateikta tarp kabuciu
+0029   0085           00119                 movwf PORTA                     ;perkelti W registro turini
+                      00120                                                 ;i PORTA registra
+002A                  00121 Ciklas1
+002A   0B8F           00122                 decfsz Kint2,1  ;atimti vieneta iš kintamojo
+                      00123                                                 ;Kint2 ir, kai jis bus lygus nuliui,
+                      00124                                                 ;peršokti komanda goto Ciklas1
+002B   2???           00125                 goto Ciklas1    ;pereiti i programos eilute,
+                      00126                                                 ;pažymeta žyme Ciklas1
+002C   0B90           00127                 decfsz Kint3,1  ;atimti vieneta iš kintamojo
+                      00128                                                 ;Kint3 ir, kai jis bus lygus nuliui,
+                      00129                                                 ;peršokti komanda goto Ciklas1
+002D   2???           00130                 goto Ciklas1    ;pereiti i programos eilute,
+                      00131                                                 ;pažymeta žyme Ciklas1
+002E   3000           00132                 movlw b'00000'  ;irašyti i W registra dvejetaini
+                      00133                                                 ;skaiciu, pateikta tarp kabuciu
+002F   0085           00134                 movwf PORTA     ;perkelti W registro turini
+                      00135                                                 ;i PORTA registra
+0030                  00136 Ciklas2
+0030   0B8F           00137                 decfsz Kint2,1  ;atimti vieneta iš kintamojo
+                      00138                                                 ;Kint2 ir, kai jis bus
+                      00139                                                 ;lygus nuliui, peršokti
+                      00140                                                 ;komanda goto Ciklas2
+0031   2???           00141                 goto Ciklas2    ;pereiti i programos eilute,
+                      00142                                                 ;pažymeta žyme Ciklas2
+0032   0B90           00143                 decfsz Kint3,1 ;atimti vieneta iš kintamojo
+                      00144                                                 ;Kint3 ir, kai jis bus
+                      00145                                                 ;lygus nuliui, peršokti
+                      00146                                                 ;komanda goto Ciklas2
+0033   2???           00147                 goto Ciklas2    ;pereiti i programos eilute,
+MPASM  5.51                          LAB8.ASM   11-24-2022  15:26:07         PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00148                                                 ;pažymeta žyme Ciklas2
+0034   2???           00149                 goto Start              ;pereiti i programos eilute,
+                      00150                                                 ;pažymeta žyme Start
+3FF1                  00151                 END                     ;programos pabaiga
+MPASM  5.51                          LAB8.ASM   11-24-2022  15:26:07         PAGE  5
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
 C                                 00000000
+Ciklas1                           0000002A
+Ciklas2                           00000030
 DC                                00000001
 EEADR                             00000009
 EECON1                            00000088
@@ -156,7 +210,9 @@ INTE                              00000004
 INTEDG                            00000006
 INTF                              00000001
 IRP                               00000007
-Kint1                             0000000C
+Kint1                             0000000E
+Kint2                             0000000F
+Kint3                             00000010
 NOT_PD                            00000003
 NOT_RBPU                          00000007
 NOT_TO                            00000004
@@ -169,6 +225,7 @@ PS0                               00000000
 PS1                               00000001
 PS2                               00000002
 PSA                               00000003
+Pagrindineprogr                   00000013
 RA0                               00000000
 RA1                               00000001
 RA2                               00000002
@@ -187,17 +244,17 @@ RBIF                              00000000
 RD                                00000000
 RP0                               00000005
 RP1                               00000006
-STATUS                            00000003
-Start1                            0000000C
-Start2                            00000018
-T0CS                              00000005
-T0IE                              00000005
-MPASM  5.51                          LAB8.ASM   11-24-2022  15:10:04         PAGE  5
+MPASM  5.51                          LAB8.ASM   11-24-2022  15:26:07         PAGE  6
 
 
 SYMBOL TABLE
   LABEL                             VALUE 
 
+STATUS                            00000003
+Start                             00000028
+Stat                              0000000D
+T0CS                              00000005
+T0IE                              00000005
 T0IF                              00000002
 T0SE                              00000004
 TMR0                              00000001
@@ -218,10 +275,12 @@ TRISB4                            00000004
 TRISB5                            00000005
 TRISB6                            00000006
 TRISB7                            00000007
+Ten                               0000000D
 W                                 00000000
 WR                                00000001
 WREN                              00000002
 WRERR                             00000003
+Wreg                              0000000C
 Z                                 00000002
 _CONFIG                           00002007
 _CP_OFF                           00003FFF
@@ -244,18 +303,18 @@ _WDTE_OFF                         00003FFB
 _WDTE_ON                          00003FFF
 _WDT_OFF                          00003FFB
 _WDT_ON                           00003FFF
+MPASM  5.51                          LAB8.ASM   11-24-2022  15:26:07         PAGE  7
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
 _XT_OSC                           00003FFD
 __16F84A                          00000001
 __DEBUG                           1
 
-MPASM  5.51                          LAB8.ASM   11-24-2022  15:10:04         PAGE  6
-
-
-
-
-
 Errors   :     0
 Warnings :     0 reported,     0 suppressed
-Messages :     4 reported,     0 suppressed
+Messages :     3 reported,     0 suppressed
 
 
