@@ -55,6 +55,18 @@ Start1
 						;pateikta tarp kabuciu
 		movwf TMR0 		;perkelti W registro turini
 						;i TMRO registra
+		
+		nop
+		nop
+		nop
+		nop
+		nop
+		nop
+		nop
+		nop
+		nop
+		nop
+		
 Start2
 		btfss INTCON,2 	;patikrinti INTCON
 						;registro 2 skilti,
@@ -72,7 +84,14 @@ Start2
 						;goto Start1
 		goto Start1 	;pereiti i programos eilute,
 						;pažymeta žyme Start1
-		incf PORTB 		;padidinti PORTB registro
+			
+		movlw d'1'
+		addwf PORTB,1
+		
+		btfsc STATUS,0
+		incf PORTA
+			
+		;incf PORTB 		;padidinti PORTB registro
 						;turini vienetu
 		movlw d'16' 	;irašyti i W registra
 						;dešimtaini skaiciu,

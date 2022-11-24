@@ -1,0 +1,4 @@
+Message[302] C:\USERS\AUGUSTINAS\DOCUMENTS\LAB_BASELINES\LAB8.ASM 30 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\USERS\AUGUSTINAS\DOCUMENTS\LAB_BASELINES\LAB8.ASM 37 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[302] C:\USERS\AUGUSTINAS\DOCUMENTS\LAB_BASELINES\LAB8.ASM 43 : Register in operand not in bank 0.  Ensure that bank bits are correct.
+Message[305] C:\USERS\AUGUSTINAS\DOCUMENTS\LAB_BASELINES\LAB8.ASM 92 : Using default destination of 1 (file).
