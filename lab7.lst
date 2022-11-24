@@ -1,0 +1,307 @@
+MPASM  5.51                          LAB7.ASM   11-17-2022  15:44:13         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00001 ;******************Tiesioginis laikmatis ******************
+                      00002 ;********************V. Pavarde************************
+                      00003 ; Mikrovaldiklis PIC16F84A
+                      00004 ; Kvarcinio rezonatoriaus daznis 4 MHz
+                      00005 ;****************************************************** 
+                      00006 
+                      00007 ;******************************************************
+                      00008         LIST p=16F84            ;nustatomas MV tipas
+                      00009         #INCLUDE <p16F84a.inc> ;iskvieciama rinkmena,
+                      00001         LIST
+                      00002 
+                      00003 ;==========================================================================
+                      00004 ;  MPASM PIC16F84A processor include
+                      00005 ; 
+                      00006 ;  (c) Copyright 1999-2013 Microchip Technology, All rights reserved
+                      00007 ;==========================================================================
+                      00008 
+                      00208         LIST
+                      00010                                                 ;aprasanti specifinius
+                      00011                                                 ;MV kintamuosius
+2007   3FF1           00012         __CONFIG _XT_OSC & _WDT_OFF & _PWRTE_ON & _CP_OFF ;suteikiama reikiama
+                      00013                                                 ;konfiguracija MV
+                      00014 ;******************************************************
+                      00015 
+                      00016 ;********************* Kintamieji ***********************
+  0000000C            00017 Kint1 EQU 0Ch ;registra 0Ch pavadinti Kint1
+  0000000D            00018 Kint2 EQU 0Dh ;registra 0Dh pavadinti Kint2
+  0000000E            00019 Kint3 EQU 0Eh ;registra 0Eh pavadinti Kint3
+  0000000F            00020 Kint4 EQU 0Fh ;registra 0Fh pavadinti Kint4
+  00000010            00021 Kint5 EQU 10h ;registra 10h pavadinti Kint5
+                      00022 ;******************************************************
+                      00023 
+                      00024                 ORG 0x000               ;nurodomas pradinis programos adresas
+                      00025 
+0000   0185           00026                 clrf PORTA              ;isvalyti PORTA registra
+0001   0186           00027                 clrf PORTB              ;isvalyti PORTB registra
+                      00028 
+0002   1683           00029                 bsf STATUS, 5   ;pereiti i 1 banka
+                      00030 
+0003   3000           00031                 movlw b'00000000' ;irasyti i W registra dvejetaini
+                      00032                                                 ;skaiciu, pateikta tarp kabuciu
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0004   0086           00033                 movwf TRISB     ;perkelti W registro turini i
+                      00034                                                 ;TRISB (nustatyti B prievado
+                      00035                                                 ;isvadus duomenims isvesti)
+0005   3001           00036                 movlw b'00001'  ;irasyti i W registra dvejetaini
+                      00037                                                 ;skaiciu, pateikta tarp kabuciu
+Message[302]: Register in operand not in bank 0.  Ensure that bank bits are correct.
+0006   0085           00038                 movwf TRISA     ;perkelti W registro turini i TRISA
+                      00039                                                 ;registra (nustatyti A prievado
+                      00040                                                 ;RA0 isvada duomenims ivesti,
+                      00041                                                 ;o RA1, RA2, RA3, RA4
+                      00042                                                 ;isvadus – duomenims isvesti)
+MPASM  5.51                          LAB7.ASM   11-17-2022  15:44:13         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+0007   1283           00043                 bcf STATUS, 5   ;pereiti i 0 banka 
+                      00044 
+                      00045 
+0008   300F           00046                 movlw d'15'     ;įrašyti į W registrą
+                      00047                                                 ;dešimtainį skaičių,
+                      00048                                                 ;pateiktą tarp kabučių
+                      00049                                                 ;(nustatyti atgalinio
+                      00050                                                 ;laikmačio pradinį laiką)
+0009   0086           00051                 movwf PORTB     ;perkelti W registro turinį į
+                      00052                                                 ;PORTB registrą
+000A                  00053 Start
+000A   2???           00054                 call Laikovienetas ;iškviesti paprogramę
+                      00055                                                 ;Laikovienetas
+                      00056                 
+                      00057                 ;decf PORTB,1
+000B   0B86           00058                 decfsz PORTB,1
+000C   2???           00059                 goto Start              ;jei PRTB != 0, sokti i Start
+                      00060 
+000D   300F           00061                 movlw d'15'
+000E   0086           00062                 movwf PORTB
+000F   2???           00063                 goto Start
+                      00064 
+0010   2???           00065                 call Sustabdymas ;sustabdom jei PORTB gavosi 0, nes persokom goto
+                      00066 
+                      00067                                                 ;pažymėtą žyme Start 
+                      00068 
+                      00069                                                 ;Sustabdymas 
+                      00070 
+                      00071 ;************* Laiko vieneto paprograme ***************
+0011                  00072 Laikovienetas
+0011   3001           00073                 movlw d'1'              ;irasyti i W registra desimtaini
+                      00074                                                 ;skaiciu, pateikta tarp kabuciu
+0012   008E           00075                 movwf Kint3     ;perkelti W registro turini i Kint3
+0013   0B8C           00076 Ciklas1 decfsz Kint1,1  ;atimti 1 is kintamojo Kint1 ir,
+                      00077                                                 ;kai jis bus lygus nuliui,
+                      00078                                                 ;persokti komanda goto Ciklas1
+0014   2???           00079                 goto Ciklas1    ;pereiti i paprogrames eilutę,
+                      00080                                                 ;pazymeta zyme Ciklas1
+                      00081                 
+0015   0B8D           00082                 decfsz Kint2,1  ;atimti vieneta is kintamojo
+                      00083                                                 ;Kint2 ir, kai jis bus lygus nuliui,
+                      00084                                                 ;persokti komanda goto Ciklas1
+0016   2???           00085                 goto Ciklas1    ;pereiti i paprogrames eilutę,
+                      00086                                                 ;pazymeta zyme Ciklas1
+0017   0B8E           00087                 decfsz Kint3,1  ;atimti vieneta is kintamojo
+                      00088                                                 ;Kint3 ir, kai jis bus lygus nuliui,
+                      00089                                                 ;persokti komanda goto Ciklas1
+0018   2???           00090                 goto Ciklas1    ;pereiti i paprogrames eilutę,
+                      00091                                                 ;pazymeta zyme Ciklas1
+                      00092                                                 
+0019   1805           00093                 btfsc PORTA,0   ;nuskaityti signala A prievado
+                      00094                                                 ;RA0 isvade, jei jame yra „0“,
+                      00095                                                 ;persokti kita komanda
+MPASM  5.51                          LAB7.ASM   11-17-2022  15:44:13         PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+001A   2???           00096                 call Sustabdymas ;iskviesti paprogramę
+                      00097                                                 ;Sustabdymas
+                      00098                                                 
+001B   0008           00099                 return                  ;grizti i pagrindinę programa
+                      00100 ;******************************************************** 
+                      00101 
+                      00102 
+                      00103 ;***************Sustabdymo paprograme*****************
+Warning[207]: Found label after column 1. (Sustabdymas)
+001C                  00104         Sustabdymas
+001C   300E           00105 Start1  movlw b'01110'  ;irasyti i W registra
+                      00106                                                 ;dvejetaini skaiciu,
+                      00107                                                 ;pateikta tarp kabuciu
+001D   0085           00108                 movwf PORTA     ;perkelti W registro turini i PORTA
+001E   0B8F           00109 Ciklas2 decfsz Kint4,1  ;atimti vieneta is kintamojo
+                      00110                                                 ;Kint4 ir, kai jis bus lygus nuliui,
+                      00111                                                 ;persokti komanda goto Ciklas2
+001F   2???           00112                 goto Ciklas2    ;pereiti i paprogrames eilutę,
+                      00113                                                 ;pazymeta zyme Ciklas2
+0020   0B90           00114                 decfsz Kint5,1  ;atimti vieneta is kintamojo
+                      00115                                                 ;Kint5 ir, kai jis bus
+                      00116                                                 ;lygus nuliui, persokti
+                      00117                                                 ;komanda goto Ciklas2
+0021   2???           00118                 goto Ciklas2    ;pereiti i paprogrames eilutę,
+                      00119                                                 ;pazymeta zyme Ciklas2
+0022   3000           00120                 movlw b'00000'  ;irasyti i W registra dvejetaini
+                      00121                                                 ;skaiciu, pateikta tarp kabuciu
+0023   0085           00122                 movwf PORTA     ;perkelti W registro turini i
+                      00123                                                 ;PORTA registra
+0024   0B8F           00124 Ciklas3 decfsz Kint4,1  ;atimti vieneta is kintamojo
+                      00125                                                 ;Kint4 ir, kai jis bus
+                      00126                                                 ;lygus nuliui, persokti
+                      00127                                                 ; komanda goto Ciklas3
+0025   2???           00128                 goto Ciklas3    ;pereiti i paprogrames eilutę,
+                      00129                                                 ;pazymeta zyme Ciklas3
+0026   0B90           00130                 decfsz Kint5,1 ;atimti vieneta is kintamojo
+                      00131                                                 ;Kint5 ir, kai jis bus
+                      00132                                                 ;lygus nuliui, persokti
+                      00133                                                 ;komanda goto Ciklas3
+0027   2???           00134                 goto Ciklas3    ;pereiti i paprogrames eilutę,
+                      00135                                                 ;pazymeta zyme Ciklas3
+0028   2???           00136                 goto Start1     ;pereiti i paprogrames eilutę,
+                      00137                                                 ;pazymeta zyme Start1
+0029   0008           00138                 return                  ;grizti i pagrindinę programa
+                      00139 ;****************************************************** 
+                      00140 
+                      00141 
+3FF1                  00142                 END ;programos pabaiga 
+MPASM  5.51                          LAB7.ASM   11-17-2022  15:44:13         PAGE  4
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+C                                 00000000
+Ciklas1                           00000013
+Ciklas2                           0000001E
+Ciklas3                           00000024
+DC                                00000001
+EEADR                             00000009
+EECON1                            00000088
+EECON2                            00000089
+EEDATA                            00000008
+EEIE                              00000006
+EEIF                              00000004
+F                                 00000001
+FSR                               00000004
+GIE                               00000007
+INDF                              00000000
+INTCON                            0000000B
+INTE                              00000004
+INTEDG                            00000006
+INTF                              00000001
+IRP                               00000007
+Kint1                             0000000C
+Kint2                             0000000D
+Kint3                             0000000E
+Kint4                             0000000F
+Kint5                             00000010
+Laikovienetas                     00000011
+NOT_PD                            00000003
+NOT_RBPU                          00000007
+NOT_TO                            00000004
+OPTION_REG                        00000081
+PCL                               00000002
+PCLATH                            0000000A
+PORTA                             00000005
+PORTB                             00000006
+PS0                               00000000
+PS1                               00000001
+PS2                               00000002
+PSA                               00000003
+RA0                               00000000
+RA1                               00000001
+RA2                               00000002
+RA3                               00000003
+RA4                               00000004
+RB0                               00000000
+RB1                               00000001
+RB2                               00000002
+RB3                               00000003
+RB4                               00000004
+RB5                               00000005
+RB6                               00000006
+RB7                               00000007
+RBIE                              00000003
+RBIF                              00000000
+MPASM  5.51                          LAB7.ASM   11-17-2022  15:44:13         PAGE  5
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+RD                                00000000
+RP0                               00000005
+RP1                               00000006
+STATUS                            00000003
+Start                             0000000A
+Start1                            0000001C
+Sustabdymas                       0000001C
+T0CS                              00000005
+T0IE                              00000005
+T0IF                              00000002
+T0SE                              00000004
+TMR0                              00000001
+TMR0IE                            00000005
+TMR0IF                            00000002
+TRISA                             00000085
+TRISA0                            00000000
+TRISA1                            00000001
+TRISA2                            00000002
+TRISA3                            00000003
+TRISA4                            00000004
+TRISB                             00000086
+TRISB0                            00000000
+TRISB1                            00000001
+TRISB2                            00000002
+TRISB3                            00000003
+TRISB4                            00000004
+TRISB5                            00000005
+TRISB6                            00000006
+TRISB7                            00000007
+W                                 00000000
+WR                                00000001
+WREN                              00000002
+WRERR                             00000003
+Z                                 00000002
+_CONFIG                           00002007
+_CP_OFF                           00003FFF
+_CP_ON                            0000000F
+_DEVID1                           00002006
+_FOSC_EXTRC                       00003FFF
+_FOSC_HS                          00003FFE
+_FOSC_LP                          00003FFC
+_FOSC_XT                          00003FFD
+_HS_OSC                           00003FFE
+_IDLOC0                           00002000
+_IDLOC1                           00002001
+_IDLOC2                           00002002
+_IDLOC3                           00002003
+_LP_OSC                           00003FFC
+_PWRTE_OFF                        00003FFF
+_PWRTE_ON                         00003FF7
+_RC_OSC                           00003FFF
+_WDTE_OFF                         00003FFB
+_WDTE_ON                          00003FFF
+MPASM  5.51                          LAB7.ASM   11-17-2022  15:44:13         PAGE  6
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+_WDT_OFF                          00003FFB
+_WDT_ON                           00003FFF
+_XT_OSC                           00003FFD
+__16F84A                          00000001
+__DEBUG                           1
+
+Errors   :     0
+Warnings :     1 reported,     0 suppressed
+Messages :     2 reported,     0 suppressed
+
+

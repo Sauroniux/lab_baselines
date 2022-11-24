@@ -41,7 +41,7 @@ Kint2 EQU 0Eh ;registra 0Eh pavadinti Kint2
 						;TRISB registra
 		bcf STATUS, 5 	;pereiti i 0 banka
 		
-#if !PUNKTAS_23
+#if 0
 	Start	movlw b'11100000' ;irasyti i W registra
 							;dvejetaini skaicu,
 							;pateikta tarp kabucu
@@ -50,27 +50,29 @@ Kint2 EQU 0Eh ;registra 0Eh pavadinti Kint2
 
 			call Velinimas 	;iskviesti paprograma Velinimas
 
-	#if PUNKTAS_15 != 0
-			swapf PORTB, 1
-	#else #if PUNKTAS_18 != 0
-			movlw b'00111111' ;įrašyti į W registrą
+	; 15
+	;		swapf PORTB, 1
+	
+	; 18
+	;		movlw b'00111111' ;įrašyti į W registrą
 							;dvejetainį skaičių,
 							;pateiktą tarp kabučių
-			andwf PORTB, 1 	;atlikti loginę IR operaciją tarp skaičių,
+	;		andwf PORTB, 1 	;atlikti loginę IR operaciją tarp skaičių,
 							;esančių W registre ir PORTB registre
-	#else #if PUNKTAS_20
-			andlw b‘10000000‘ ;atlikti loginę IR operaciją
+
+	; 20
+	;		andlw b'10000000';atlikti loginę IR operaciją
 							;tarp pateikto skaičiaus ir
 							;skaičiaus, esančio W registre
-			movwf PORTB 	;perkelti W registro turinį
+	;		movwf PORTB 	;perkelti W registro turinį
 							;į PORTB registrą
-	#else #if PUNKTAS_22
-			xorlw b'10010101'
-			movwf PORTB
-	#else
-							;Pradine uzduotis
-			comf PORTB, 1 	;invertuoti PORTB registro turini
-	#endif
+
+	; 22
+	;		xorlw b'10010101'
+	;		movwf PORTB
+	
+	;Pradine uzduotis
+	;		comf PORTB, 1 	;invertuoti PORTB registro turini
 
 			call Velinimas 	;iskviesti paprograma Velinimas
 			goto Start 		;pereiti i programos eiluta, pazymeta

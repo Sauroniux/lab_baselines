@@ -1,120 +1,141 @@
 ;******************Tiesioginis laikmatis ******************
-;********************V. Pavardė************************
+;********************V. Pavarde************************
 ; Mikrovaldiklis PIC16F84A
-; Kvarcinio rezonatoriaus dažnis 4 MHz
+; Kvarcinio rezonatoriaus daznis 4 MHz
 ;****************************************************** 
 
 ;******************************************************
 	LIST p=16F84 		;nustatomas MV tipas
-	#INCLUDE <p16F84a.inc> ;iškviečiama rinkmena,
-						;aprašanti specifinius
+	#INCLUDE <p16F84a.inc> ;iskvieciama rinkmena,
+						;aprasanti specifinius
 						;MV kintamuosius
 	__CONFIG _XT_OSC & _WDT_OFF & _PWRTE_ON & _CP_OFF ;suteikiama reikiama
-						;konfigūracija MV
+						;konfiguracija MV
 ;******************************************************
 
 ;********************* Kintamieji ***********************
-Kint1 EQU 0Ch ;registrą 0Ch pavadinti Kint1
-Kint2 EQU 0Dh ;registrą 0Dh pavadinti Kint2
-Kint3 EQU 0Eh ;registrą 0Eh pavadinti Kint3
-Kint4 EQU 0Fh ;registrą 0Fh pavadinti Kint4
-Kint5 EQU 10h ;registrą 10h pavadinti Kint5
+Kint1 EQU 0Ch ;registra 0Ch pavadinti Kint1
+Kint2 EQU 0Dh ;registra 0Dh pavadinti Kint2
+Kint3 EQU 0Eh ;registra 0Eh pavadinti Kint3
+Kint4 EQU 0Fh ;registra 0Fh pavadinti Kint4
+Kint5 EQU 10h ;registra 10h pavadinti Kint5
 ;******************************************************
 
 		ORG 0x000 		;nurodomas pradinis programos adresas
 
-		clrf PORTA 		;išvalyti PORTA registrą
-		clrf PORTB 		;išvalyti PORTB registrą
+		clrf PORTA 		;isvalyti PORTA registra
+		clrf PORTB 		;isvalyti PORTB registra
 
-		bsf STATUS, 5 	;pereiti į 1 banką
+		bsf STATUS, 5 	;pereiti i 1 banka
 
-		movlw b’00000000’ ;įrašyti į W registrą dvejetainį
-						;skaičių, pateiktą tarp kabučių
-		movwf TRISB 	;perkelti W registro turinį į
+		movlw b'00000000' ;irasyti i W registra dvejetaini
+						;skaiciu, pateikta tarp kabuciu
+		movwf TRISB 	;perkelti W registro turini i
 						;TRISB (nustatyti B prievado
-						;išvadus duomenims išvesti)
-		movlw b'00001' 	;įrašyti į W registrą dvejetainį
-						;skaičių, pateiktą tarp kabučių
-		movwf TRISA 	;perkelti W registro turinį į TRISA
-						;registrą (nustatyti A prievado
-						;RA0 išvadą duomenims įvesti,
+						;isvadus duomenims isvesti)
+		movlw b'00001' 	;irasyti i W registra dvejetaini
+						;skaiciu, pateikta tarp kabuciu
+		movwf TRISA 	;perkelti W registro turini i TRISA
+						;registra (nustatyti A prievado
+						;RA0 isvada duomenims ivesti,
 						;o RA1, RA2, RA3, RA4
-						;išvadus – duomenims išvesti)
-		bcf STATUS, 5 	;pereiti į 0 banką 
+						;isvadus – duomenims isvesti)
+		bcf STATUS, 5 	;pereiti i 0 banka 
 
 
-Start 	call Laikovienetas ;iškviesti paprogramę Laikovienetas
-		incf PORTB,1 	;padidinti PORTB registro
-						;turinį vienetu
-		goto Start 		;pereiti į programos eilutę,
-						;pažymėtą žyme Start
+		movlw d'15' 	;įrašyti į W registrą
+						;dešimtainį skaičių,
+						;pateiktą tarp kabučių
+						;(nustatyti atgalinio
+						;laikmačio pradinį laiką)
+		movwf PORTB 	;perkelti W registro turinį į
+						;PORTB registrą
+Start
+		call Laikovienetas ;iškviesti paprogramę
+						;Laikovienetas
+		
+		;decf PORTB,1
+		decfsz PORTB,1
+		goto Start 		;jei PRTB != 0, sokti i Start
 
+		movlw d'15'
+		movwf PORTB
+		goto Start
 
-;************* Laiko vieneto paprogramė ***************
+		call Sustabdymas ;sustabdom jei PORTB gavosi 0, nes persokom goto
+
+						;pažymėtą žyme Start 
+
+						;Sustabdymas 
+
+;************* Laiko vieneto paprograme ***************
 Laikovienetas
-		movlw d‘5‘ 		;įrašyti į W registrą dešimtainį
-						;skaičių, pateiktą tarp kabučių
-		movwf Kint3 	;perkelti W registro turinį į Kint3
-Ciklas1 decfsz Kint1,1 	;atimti 1 iš kintamojo Kint1 ir,
+		movlw d'1'		;irasyti i W registra desimtaini
+						;skaiciu, pateikta tarp kabuciu
+		movwf Kint3 	;perkelti W registro turini i Kint3
+Ciklas1 decfsz Kint1,1 	;atimti 1 is kintamojo Kint1 ir,
 						;kai jis bus lygus nuliui,
-						;peršokti komandą goto Ciklas1
-		goto Ciklas1 	;pereiti į paprogramės eilutę,
-						;pažymėtą žyme Ciklas1
-		btfsc PORTA,0 	;nuskaityti signalą A prievado
-						;RA0 išvade, jei jame yra „0“,
-						;peršokti kitą komandą
-		call Sustabdymas ;iškviesti paprogramę
-						;Sustabdymas
-		decfsz Kint2,1 	;atimti vienetą iš kintamojo
+						;persokti komanda goto Ciklas1
+		goto Ciklas1 	;pereiti i paprogrames eilutę,
+						;pazymeta zyme Ciklas1
+		
+		decfsz Kint2,1 	;atimti vieneta is kintamojo
 						;Kint2 ir, kai jis bus lygus nuliui,
-						;peršokti komandą goto Ciklas1
-		goto Ciklas1 	;pereiti į paprogramės eilutę,
-						;pažymėtą žyme Ciklas1
-		decfsz Kint3,1 	;atimti vienetą iš kintamojo
+						;persokti komanda goto Ciklas1
+		goto Ciklas1 	;pereiti i paprogrames eilutę,
+						;pazymeta zyme Ciklas1
+		decfsz Kint3,1 	;atimti vieneta is kintamojo
 						;Kint3 ir, kai jis bus lygus nuliui,
-						;peršokti komandą goto Ciklas1
-		goto Ciklas1 	;pereiti į paprogramės eilutę,
-						;pažymėtą žyme Ciklas1
-		return 			;grįžti į pagrindinę programą
+						;persokti komanda goto Ciklas1
+		goto Ciklas1 	;pereiti i paprogrames eilutę,
+						;pazymeta zyme Ciklas1
+						
+		btfsc PORTA,0 	;nuskaityti signala A prievado
+						;RA0 isvade, jei jame yra „0“,
+						;persokti kita komanda
+		call Sustabdymas ;iskviesti paprogramę
+						;Sustabdymas
+						
+		return 			;grizti i pagrindinę programa
 ;******************************************************** 
 
 
-;***************Sustabdymo paprogramė*****************
+;***************Sustabdymo paprograme*****************
 	Sustabdymas
-Start1 	movlw b’01110’ 	;įrašyti į W registrą
-						;dvejetainį skaičių,
-						;pateiktą tarp kabučių
-		movwf PORTA 	;perkelti W registro turinį į PORTA
-Ciklas2 decfsz Kint4,1 	;atimti vienetą iš kintamojo
+Start1 	movlw b'01110' 	;irasyti i W registra
+						;dvejetaini skaiciu,
+						;pateikta tarp kabuciu
+		movwf PORTA 	;perkelti W registro turini i PORTA
+Ciklas2 decfsz Kint4,1 	;atimti vieneta is kintamojo
 						;Kint4 ir, kai jis bus lygus nuliui,
-						;peršokti komandą goto Ciklas2
-		goto Ciklas2 	;pereiti į paprogramės eilutę,
-						;pažymėtą žyme Ciklas2
-		decfsz Kint5,1 	;atimti vienetą iš kintamojo
+						;persokti komanda goto Ciklas2
+		goto Ciklas2 	;pereiti i paprogrames eilutę,
+						;pazymeta zyme Ciklas2
+		decfsz Kint5,1 	;atimti vieneta is kintamojo
 						;Kint5 ir, kai jis bus
-						;lygus nuliui, peršokti
-						;komandą goto Ciklas2
-		goto Ciklas2 	;pereiti į paprogramės eilutę,
-						;pažymėtą žyme Ciklas2
-		movlw b’00000’ 	;įrašyti į W registrą dvejetainį
-						;skaičių, pateiktą tarp kabučių
-		movwf PORTA 	;perkelti W registro turinį į
-						;PORTA registrą
-Ciklas3 decfsz Kint4,1 	;atimti vienetą iš kintamojo
+						;lygus nuliui, persokti
+						;komanda goto Ciklas2
+		goto Ciklas2 	;pereiti i paprogrames eilutę,
+						;pazymeta zyme Ciklas2
+		movlw b'00000' 	;irasyti i W registra dvejetaini
+						;skaiciu, pateikta tarp kabuciu
+		movwf PORTA 	;perkelti W registro turini i
+						;PORTA registra
+Ciklas3 decfsz Kint4,1 	;atimti vieneta is kintamojo
 						;Kint4 ir, kai jis bus
-						;lygus nuliui, peršokti
-						; komandą goto Ciklas3
-		goto Ciklas3 	;pereiti į paprogramės eilutę,
-						;pažymėtą žyme Ciklas3
-		decfsz Kint5,1 ;atimti vienetą iš kintamojo
+						;lygus nuliui, persokti
+						; komanda goto Ciklas3
+		goto Ciklas3 	;pereiti i paprogrames eilutę,
+						;pazymeta zyme Ciklas3
+		decfsz Kint5,1 ;atimti vieneta is kintamojo
 						;Kint5 ir, kai jis bus
-						;lygus nuliui, peršokti
-						;komandą goto Ciklas3
-		goto Ciklas3 	;pereiti į paprogramės eilutę,
-						;pažymėtą žyme Ciklas3
-		goto Start1 	;pereiti į paprogramės eilutę,
-						;pažymėtą žyme Start1
-		return 			;grįžti į pagrindinę programą
+						;lygus nuliui, persokti
+						;komanda goto Ciklas3
+		goto Ciklas3 	;pereiti i paprogrames eilutę,
+						;pazymeta zyme Ciklas3
+		goto Start1 	;pereiti i paprogrames eilutę,
+						;pazymeta zyme Start1
+		return 			;grizti i pagrindinę programa
 ;****************************************************** 
 
 

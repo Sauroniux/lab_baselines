@@ -1,38 +1,46 @@
 MPLINK 4.49, Linker
-Linker Map File - Created Thu Nov 17 14:24:19 2022
+Linker Map File - Created Thu Nov 17 15:44:13 2022
 
                                  Section Info
                   Section       Type    Address   Location Size(Bytes)
                 ---------  ---------  ---------  ---------  ---------
-                   .org_0       code   0x000000    program   0x00003a
-                   .cinit    romdata   0x00001d    program   0x000004
-      .config_2007_LAB5.O       code   0x002007    program   0x000002
+                   .org_0       code   0x000000    program   0x000054
+                   .cinit    romdata   0x00002a    program   0x000004
+      .config_2007_LAB7.O       code   0x002007    program   0x000002
 
 
 
                               Program Memory Usage 
                                Start         End      
                            ---------   ---------      
-                            0x000000    0x00001e      
+                            0x000000    0x00002b      
                             0x002007    0x002007      
-            32 out of 1094 program addresses used, program memory utilization is 2%
+            45 out of 1094 program addresses used, program memory utilization is 4%
 
 
 
                               Symbols - Sorted by Name
                      Name    Address   Location    Storage File                     
                 ---------  ---------  ---------  --------- ---------                
-                   Ciklas   0x000018    program     static C:\Users\Augustinas\Documents\lab_baselines\lab5.asm
-                    Start   0x000006    program     static C:\Users\Augustinas\Documents\lab_baselines\lab5.asm
-                Velinimas   0x000018    program     static C:\Users\Augustinas\Documents\lab_baselines\lab5.asm
+                  Ciklas1   0x000013    program     static C:\Users\Augustinas\Documents\lab_baselines\lab7.asm
+                  Ciklas2   0x00001e    program     static C:\Users\Augustinas\Documents\lab_baselines\lab7.asm
+                  Ciklas3   0x000024    program     static C:\Users\Augustinas\Documents\lab_baselines\lab7.asm
+            Laikovienetas   0x000011    program     static C:\Users\Augustinas\Documents\lab_baselines\lab7.asm
+                    Start   0x00000a    program     static C:\Users\Augustinas\Documents\lab_baselines\lab7.asm
+                   Start1   0x00001c    program     static C:\Users\Augustinas\Documents\lab_baselines\lab7.asm
+              Sustabdymas   0x00001c    program     static C:\Users\Augustinas\Documents\lab_baselines\lab7.asm
 
 
 
                               Symbols - Sorted by Address
                      Name    Address   Location    Storage File                     
                 ---------  ---------  ---------  --------- ---------                
-                    Start   0x000006    program     static C:\Users\Augustinas\Documents\lab_baselines\lab5.asm
-                   Ciklas   0x000018    program     static C:\Users\Augustinas\Documents\lab_baselines\lab5.asm
-                Velinimas   0x000018    program     static C:\Users\Augustinas\Documents\lab_baselines\lab5.asm
+                    Start   0x00000a    program     static C:\Users\Augustinas\Documents\lab_baselines\lab7.asm
+            Laikovienetas   0x000011    program     static C:\Users\Augustinas\Documents\lab_baselines\lab7.asm
+                  Ciklas1   0x000013    program     static C:\Users\Augustinas\Documents\lab_baselines\lab7.asm
+                   Start1   0x00001c    program     static C:\Users\Augustinas\Documents\lab_baselines\lab7.asm
+              Sustabdymas   0x00001c    program     static C:\Users\Augustinas\Documents\lab_baselines\lab7.asm
+                  Ciklas2   0x00001e    program     static C:\Users\Augustinas\Documents\lab_baselines\lab7.asm
+                  Ciklas3   0x000024    program     static C:\Users\Augustinas\Documents\lab_baselines\lab7.asm
 
 
